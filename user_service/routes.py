@@ -7,6 +7,9 @@ import json
 import os
 user_bp = Blueprint('user', __name__)
 
+# Admin Registration Code from Environment
+ADMIN_REGISTRATION_CODE = os.getenv("ADMIN_REGISTRATION_CODE", "Syeda_Samia_Sultana")
+
 # Endpoint: Register a new user
 @user_bp.route('/register', methods=['POST'])
 def register():
@@ -15,6 +18,7 @@ def register():
     email = data.get('email')
     password = data.get('password')
     role = data.get('role', 'User')  # Default role is "User"
+    admin_code = data.get('admin_code', None)
 
     # Validate inputs
     if not name or not email or not password:
@@ -26,15 +30,23 @@ def register():
     if not User.is_valid_password(password):
         return jsonify({'error': 'Password must be at least 5 characters long!'}), 400
 
-    # Check if the user already exists
     if User.find_by_email(email):
         return jsonify({'error': 'Email already registered!'}), 400
 
-    # Create and save user
+    # Check for admin registration code if the role is "Admin"
+    if role == 'Admin' and admin_code != ADMIN_REGISTRATION_CODE:
+        return jsonify({'error': 'Invalid or missing admin registration code!'}), 403
+
+    # Create and save the user
     new_user = User(name, email, password, role)
     users_db.append(new_user.to_dict())
-    save_users(users_db)  # Save users to file
-    return jsonify({'message': 'User registered successfully!'}), 201
+    save_users(users_db)
+    # Return a custom success message based on role
+    if role == 'Admin':
+        return jsonify({'message': 'Admin registered successfully!'}), 201
+    else:
+        return jsonify({'message': 'User registered successfully!'}), 201
+
 
 # Endpoint: Login
 @user_bp.route('/login', methods=['POST'])

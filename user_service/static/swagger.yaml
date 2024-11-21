@@ -9,7 +9,8 @@ paths:
   /api/users/register:
     post:
       summary: Register a new user
-      description: Creates a new user account.
+      tags:
+        - Users
       requestBody:
         required: true
         content:
@@ -19,16 +20,26 @@ paths:
               properties:
                 name:
                   type: string
+                  example: John Doe
                 email:
                   type: string
+                  example: john.doe@example.com
                 password:
                   type: string
+                  example: Password123
+                role:
+                  type: string
+                  example: Admin
+                admin_code:
+                  type: string
+                  example: secure_admin_code
       responses:
-        '201':
-          description: User registered successfully.
-        '400':
-          description: Invalid input.
-
+        201:
+          description: User registered successfully
+        400:
+          description: Bad Request
+        403:
+          description: Invalid admin registration code      
   /api/users/login:
     post:
       summary: Login and get an access token
