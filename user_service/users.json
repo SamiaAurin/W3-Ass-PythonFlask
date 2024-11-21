@@ -1,0 +1,14 @@
+[
+    {
+        "name": "aurin",
+        "email": "aurin@gmail.com",
+        "password": "scrypt:32768:8:1$tk2SbaXTlGNpxfAQ$873805638f27bf6298805b9283e17ccc47feedc31e075919c5954b93e5bedb298039ebb36e378f61bf21c5680ae3d0caa2b95af0b4f77cd2156228f11426186a",
+        "role": "User"
+    },
+    {
+        "name": "samia",
+        "email": "samia@gmail.com",
+        "password": "scrypt:32768:8:1$DtlaNb2xtVt8RJIX$965499750b9f0f403cc5a74d6cfc60df37e3be0b6f6192a7db4e3af255d01c873585a852ec0649f6854ce533c357dda40d23d54c057da099af002b3ed00538e7",
+        "role": "User"
+    }
+]
