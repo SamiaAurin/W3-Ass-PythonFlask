@@ -1,0 +1,1 @@
+users_db = [{'name': 'as', 'email': 'as@example.com', 'password': 'scrypt:32768:8:1$YVYchXXH4QATGdla$5baacb7a8c5fa8f133cb2a3655534bf84488859e7d7dd08bb30bb9943c6106c35086c2af74b43002d79ac52b88ddd9ae0fd2408a90a673191a53bb68bd79389b', 'role': 'Admin'}]

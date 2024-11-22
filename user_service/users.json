@@ -22,5 +22,11 @@
         "email": "john.doe@yahoo.com",
         "password": "scrypt:32768:8:1$FquvujCbLBHFlvNU$bdfb8d41e551426db7e69c5562e6f8f764847be65b30ef7b0da683b7b3143d44bf9701f9f69ba669f6521b8037b342d910e4f931fec49867e3394cba43629b61",
         "role": "Admin"
+    },
+    {
+        "name": "admin",
+        "email": "admin@gmail.com",
+        "password": "scrypt:32768:8:1$7TIX4gW5J1XGEKpJ$8178178f4727eb5635f34bab12a684eb334e714660467c389856063711ee013f3ff106353ac43f8ddfc8d2f2531ea329c939bde2edcb46d1b32f70fbfa9f4ae3",
+        "role": "Admin"
     }
 ]

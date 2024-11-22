@@ -4,6 +4,7 @@ from flask_swagger_ui import get_swaggerui_blueprint
 from routes import user_bp
 import os
 from dotenv import load_dotenv
+from datetime import timedelta
 
 # Load environment variables from .env file
 load_dotenv()
@@ -11,8 +12,8 @@ load_dotenv()
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'supersecretkey')
-    app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'superjwtsecret')
-
+    app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'supersecretkey123')
+    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=5)
     # Initialize JWT
     jwt = JWTManager(app)
 
