@@ -1,65 +1,67 @@
-class Destination:
-    # Sample destinations (you would typically use a database instead)
-    destinations_db = [
-        {"id": 1, "name": "Paris", "description": "The City of Light", "location": "France"},
-        {"id": 2, "name": "Tokyo", "description": "The Capital of Japan", "location": "Japan"},
-        {"id": 3, "name": "New York", "description": "The Big Apple", "location": "USA"}
-    ]
+from data import DestinationData
 
-    @classmethod
-    def get_all_destinations(cls):
+class Destination:
+    @staticmethod
+    def get_all_destinations():
         """
         Retrieves all destinations.
         """
-        return cls.destinations_db
+        return DestinationData.load_destinations()
 
-    @classmethod
-    def get_destination_by_id(cls, destination_id):
+    @staticmethod
+    def get_destination_by_id(destination_id):
         """
         Retrieves a destination by its ID.
         """
-        return next((destination for destination in cls.destinations_db if destination['id'] == destination_id), None)
+        destinations = DestinationData.load_destinations()
+        return next((destination for destination in destinations if destination["id"] == destination_id), None)
 
-    @classmethod
-    def add_destination(cls, name, description, location):
+    @staticmethod
+    def add_destination(name, description, location):
         """
         Adds a new destination to the list of destinations.
         """
-        new_id = max(destination['id'] for destination in cls.destinations_db) + 1
+        destinations = DestinationData.load_destinations()
+        new_id = DestinationData.get_next_id(destinations)
         new_destination = {
             "id": new_id,
             "name": name,
             "description": description,
             "location": location
         }
-        cls.destinations_db.append(new_destination)
+        destinations.append(new_destination)
+        DestinationData.save_destinations(destinations)
         return new_destination
 
-    @classmethod
-    def update_destination(cls, destination_id, name=None, description=None, location=None):
+    @staticmethod
+    def update_destination(destination_id, name=None, description=None, location=None):
         """
         Updates an existing destination. Only non-None fields will be updated.
         """
-        destination = cls.get_destination_by_id(destination_id)
+        destinations = DestinationData.load_destinations()
+        destination = next((dest for dest in destinations if dest["id"] == destination_id), None)
         if not destination:
-            return None  # Destination not found
+            return None
 
         if name:
-            destination['name'] = name
+            destination["name"] = name
         if description:
-            destination['description'] = description
+            destination["description"] = description
         if location:
-            destination['location'] = location
-        
+            destination["location"] = location
+
+        DestinationData.save_destinations(destinations)
         return destination
 
-    @classmethod
-    def delete_destination(cls, destination_id):
+    @staticmethod
+    def delete_destination(destination_id):
         """
         Deletes a destination by its ID.
         """
-        destination = cls.get_destination_by_id(destination_id)
+        destinations = DestinationData.load_destinations()
+        destination = next((dest for dest in destinations if dest["id"] == destination_id), None)
         if destination:
-            cls.destinations_db.remove(destination)
+            destinations.remove(destination)
+            DestinationData.save_destinations(destinations)
             return True
         return False

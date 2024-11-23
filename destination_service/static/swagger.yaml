@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   title: Travel API - Destination Service
-  description: API for managing travel destinations (viewing, adding, and deleting destinations)
+  description: API for managing travel destinations (viewing, adding, updating, and deleting destinations)
   version: 1.0.0
   contact:
     name: API Support
@@ -47,13 +47,18 @@ paths:
       tags:
         - Destinations
       security:
-        - bearerAuth: []  # Ensure the user is authenticated
+        - bearerAuth: []
       requestBody:
         description: Destination details to be added
+        required: true
         content:
           application/json:
             schema:
               type: object
+              required:
+                - name
+                - description
+                - location
               properties:
                 name:
                   type: string
@@ -67,12 +72,111 @@ paths:
       responses:
         '201':
           description: Destination added successfully
-        '403':
-          description: Unauthorized. Admin role required.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Destination added successfully
+                  destination:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 4
+                      name:
+                        type: string
+                        example: Berlin
+                      description:
+                        type: string
+                        example: The Capital of Germany
+                      location:
+                        type: string
+                        example: Germany
         '400':
           description: Bad request. Missing or invalid parameters.
-          
+        '401':
+          description: Missing Authorization header.
+        '403':
+          description: Unauthorized. Admin role required.
+
   /api/destinations/{id}:
+    put:
+      summary: Update an existing travel destination (Admin-only)
+      operationId: updateDestination
+      tags:
+        - Destinations
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the destination to update
+          required: true
+          schema:
+            type: integer
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: Updated destination details
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Berlin Updated"
+                description:
+                  type: string
+                  example: "Updated description of Berlin"
+                location:
+                  type: string
+                  example: "Germany Updated"
+      responses:
+        '200':
+          description: Destination updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Destination updated successfully
+                  destination:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                        example: Berlin Updated
+                      description:
+                        type: string
+                        example: Updated description of Berlin
+                      location:
+                        type: string
+                        example: Germany Updated
+        '400':
+          description: Bad request. Missing or invalid parameters.
+        '401':
+          description: Missing Authorization header.
+        '403':
+          description: Unauthorized. Admin role required.
+        '404':
+          description: Destination not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Destination not found.
+
     delete:
       summary: Delete a specific travel destination (Admin-only)
       operationId: deleteDestination
@@ -86,12 +190,30 @@ paths:
           schema:
             type: integer
       security:
-        - bearerAuth: []  # Ensure the user is authenticated
+        - bearerAuth: []
       responses:
         '200':
           description: Destination deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Destination deleted successfully!
         '404':
-          description: Destination not found
+          description: Destination not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Destination not found.
+        '401':
+          description: Missing Authorization header.
         '403':
           description: Unauthorized. Admin role required.
 
