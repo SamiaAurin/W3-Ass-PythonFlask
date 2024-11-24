@@ -1,6 +1,8 @@
+# Travel API with Microservices
+
 ## Table of Contents
 
-1. [Project Overview](#travel-api-with-microservices)
+1. [Project Overview](#project-overview)
 2. [Features](#features)
 3. [Technologies Used](#technologies-used)
 4. [Project Setup](#project-setup)
@@ -18,7 +20,7 @@
 9. [Testing](#testing)
 
 
-# **Travel API with Microservices**
+# **Project Overview**
 
 This project is a microservices-based architecture built with Flask, focusing on the Travel API, consisting of three main services: **Authentication Service**, **User Service**, and **Destination Service**. The project includes JWT-based authentication and role-based access control.
 
@@ -43,7 +45,7 @@ This project is a microservices-based architecture built with Flask, focusing on
 
 ```bash
 git clone https://github.com/SamiaAurin/W3-Ass-PythonFlask.git
-cd travel-api-microservices
+cd your_folder
 ```
 ### **Project Structure**
 
