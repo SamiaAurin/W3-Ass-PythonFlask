@@ -3,3 +3,25 @@ venv/
 authentication_service/venv/
 user_service/venv/
 destination_service/venv/
+
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+authentication_service/__pycache__/
+user_service/__pycache__/
+destination_service/__pycache__/
+# Test coverage
+.coverage
+htmlcov/
+.tox/
+.nox/
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
