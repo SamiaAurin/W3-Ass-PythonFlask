@@ -1,0 +1,59 @@
+openapi: 3.0.0
+info:
+  title: Authentication Service API
+  description: API for validating the admin registration code.
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@example.com
+servers:
+  - url: http://127.0.0.1:5003
+    description: Local Authentication Service API
+
+paths:
+  /api/auth/validate_code:
+    get:
+      summary: Validate admin registration code
+      description: Validates the provided admin registration code against the stored one.
+      operationId: validateAdminCode
+      tags:
+        - Authentication
+      parameters:
+        - name: admin_code
+          in: query
+          required: true
+          description: The admin registration code to be validated.
+          schema:
+            type: string
+            example: Syeda_Samia_Sultana
+      responses:
+        '200':
+          description: Successfully validated the admin code
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Code validated successfully
+        '400':
+          description: Admin registration code is missing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Admin registration code is missing
+        '403':
+          description: Invalid admin registration code
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Invalid registration code

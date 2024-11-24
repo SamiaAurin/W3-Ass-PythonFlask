@@ -1,0 +1,5 @@
+# Ignore virtual environment folders
+venv/
+authentication_service/venv/
+user_service/venv/
+destination_service/venv/

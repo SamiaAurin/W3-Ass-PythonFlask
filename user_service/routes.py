@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+import requests  # Add this import
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity, verify_jwt_in_request
 from flask_jwt_extended.utils import decode_token
 from werkzeug.security import check_password_hash
@@ -14,8 +15,10 @@ load_dotenv()
 user_bp = Blueprint('user', __name__)
 
 # Admin Registration Code from Environment
-ADMIN_REGISTRATION_CODE = os.getenv("ADMIN_REGISTRATION_CODE", "Syeda_Samia_Sultana")
+ADMIN_REGISTRATION_CODE = os.getenv("ADMIN_REGISTRATION_CODE")
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY","supersecretkey123")
+AUTH_SERVICE_URL = "http://127.0.0.1:5002"
+
 
 # Endpoint: Register a new user
 @user_bp.route('/register', methods=['POST'])
@@ -26,7 +29,7 @@ def register():
     password = data.get('password')
     role = data.get('role', 'User')  # Default role is "User"
     admin_code = data.get('admin_code', None)
-
+    
     # Validate inputs
     if not name or not email or not password:
         return jsonify({'error': 'Name, email, and password are required!'}), 400
@@ -38,29 +41,37 @@ def register():
         return jsonify({'error': 'Password must be at least 5 characters long!'}), 400
 
     # Load the current users from the file
-    print("Existing users:", load_users())
+    #print("Existing users:", load_users())
     users_db = load_users()
     
     # Check if the email is already registered
     if any(user['email'] == email for user in users_db):
         return jsonify({'error': 'Email already registered!'}), 400
 
-    # Check for admin registration code if the role is "Admin"
-    if role.lower() == 'admin' and admin_code != ADMIN_REGISTRATION_CODE:
-        return jsonify({'error': 'Invalid or missing admin registration code!'}), 403
+    # Check admin code validity by calling the Authentication service
+    if role.lower() == 'admin' and admin_code:
+        response = requests.post(f"{AUTH_SERVICE_URL}/api/auth/validate_admin_code", json={"admin_code": admin_code})
+        if response.status_code == 200:
+            new_user = User(name, email, password, role)
+            users_db.append(new_user.to_dict())  # Add the new user to the users_db list
+            save_users(users_db)  # Save the updated users_db to the file
+            return jsonify({'message': 'Admin registered successfully!'}), 201
+        else:
+            return jsonify({'error': 'Invalid admin code'}), 403
+    
+    elif role.lower() == 'user' and admin_code:
+        return jsonify({'error': 'Role as in User can not be registered as an Admin. '}), 403
 
-    # Create and save the user
-    new_user = User(name, email, password, role)
-    users_db.append(new_user.to_dict())  # Add the new user to the users_db list
-
-    # Save the updated users_db to the file
-    save_users(users_db)
-
-    # Return a success message based on the role
-    if role.lower() == 'admin':
-        return jsonify({'message': 'Admin registered successfully!'}), 201
+    elif role.lower() == 'user':  
+        new_user = User(name, email, password, role)
+        users_db.append(new_user.to_dict())  
+        save_users(users_db)  
+        return jsonify({'message': 'User registered successfully!'}), 201   
     else:
-        return jsonify({'message': 'User registered successfully!'}), 201
+        new_user = User(name, email, password, role = "User")
+        users_db.append(new_user.to_dict())  
+        save_users(users_db)  
+        return jsonify({'message': 'User registered successfully!'}), 201 
 
 
 
@@ -100,6 +111,7 @@ def login():
     }), 200
 
 
+
 # Endpoint: View Profile
 @user_bp.route('/profile', methods=['GET'])
 def profile():
@@ -111,16 +123,19 @@ def profile():
     try:
         # Extract the token from the Authorization header
         token = auth_header.split()[1]
+        
+        # Send the token to authentication service to decode
+        response = requests.post(f"{AUTH_SERVICE_URL}/api/auth/decode_token", json={"token": token})
 
-        # Decode the JWT token
-        decoded_token = decode_token(token)
+        if response.status_code != 200:
+            return jsonify({"message": "Invalid or expired token"}), 401
+        
+        decoded_token = response.json()
+        current_user_email = decoded_token.get('email')
+        role = decoded_token.get('role')
 
-        # Access the user's identity (email) and role from the token
-        current_user_email = decoded_token.get('sub')  # 'sub' is the identity field
-        role = decoded_token.get('role')  # Retrieve the additional claim
-
-        # Load all users from userdata.py
-        users_db = load_users()  # Assuming this loads the list of all users
+        # Load all users from userdata.py (assuming this loads the list of all users)
+        users_db = load_users()
 
         # Find the user with the matching email
         user = next((u for u in users_db if u['email'] == current_user_email), None)
@@ -134,16 +149,12 @@ def profile():
                 "name": user['name'],
                 "email": user['email'],
                 "role": user['role'],
-                "password": user['password']
+                # You may choose not to return the password
             }
         }), 200
 
     except IndexError:
         return jsonify({"message": "Bearer token malformed"}), 400
-    except ExpiredSignatureError:
-        return jsonify({"message": "Token has expired"}), 401
-    except DecodeError:
-        return jsonify({"message": "Invalid token"}), 401
     except Exception as e:
         return jsonify({"message": f"An error occurred: {str(e)}"}), 500
 

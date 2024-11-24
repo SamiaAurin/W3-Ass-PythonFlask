@@ -11,7 +11,7 @@ def save_users(new_users):
 
     # Combine existing and new users
     updated_users = existing_users + new_users
-    print("Updated users list:", updated_users)
+    
 
     # Write the updated users to the file
     with open(DATA_FILE_PATH, 'w+') as file:

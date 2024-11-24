@@ -1,1 +1,1 @@
-destinations = [{'id': 1, 'name': 'Berlin Updated', 'description': 'Updated description of Berlin', 'location': 'Germany Updated'}, {'id': 2, 'name': 'BD', 'description': 'The Capital of BD', 'location': 'BD'}]
+destinations = [{'id': 1, 'name': 'Berlin Updated', 'description': 'Updated description of Berlin', 'location': 'Germany Updated'}, {'id': 4, 'name': 'lala land', 'description': 'The Capital of England', 'location': 'London'}, {'id': 5, 'name': 'Berlin Updated', 'description': 'Updated description of Berlin', 'location': 'Germany Updated'}]

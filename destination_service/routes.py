@@ -1,19 +1,21 @@
-import os
 from flask import Blueprint, jsonify, request
+import requests  # Add this import
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_jwt_extended import decode_token
 from models import Destination
 from dotenv import load_dotenv  # Import load_dotenv
+import os
 
 # Load environment variables from .env file
 load_dotenv()  # This will load the values from .env into environment variables
 
 # Create Blueprint
-destination_bp = Blueprint('destination', __name__)
+destination_bp = Blueprint('destinations', __name__)
 
-# Get the admin registration code from environment
-ADMIN_REGISTRATION_CODE = os.getenv("ADMIN_REGISTRATION_CODE", "Syeda_Samia_Sultana")
+# Admin Registration Code from Environment
+ADMIN_REGISTRATION_CODE = os.getenv("ADMIN_REGISTRATION_CODE")
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY","supersecretkey123")
+AUTH_SERVICE_URL = "http://127.0.0.1:5002"
 
 
 @destination_bp.route('/destinations', methods=['GET'])
@@ -30,7 +32,12 @@ def add_destination():
 
     try:
         token = auth_header.split()[1]
-        decoded_token = decode_token(token)
+        response = requests.post(f"{AUTH_SERVICE_URL}/api/auth/decode_token", json={"token": token})
+
+        if response.status_code != 200:
+            return jsonify({"message": "Invalid or expired token"}), 401
+        
+        decoded_token = response.json()
         role = decoded_token.get('role')
 
         if role.lower() != "admin":
@@ -60,8 +67,13 @@ def update_destination(id):
 
     try:
         token = auth_header.split()[1]
-        decoded_token = decode_token(token)
-        role = decoded_token.get("role")
+        response = requests.post(f"{AUTH_SERVICE_URL}/api/auth/decode_token", json={"token": token})
+
+        if response.status_code != 200:
+            return jsonify({"message": "Invalid or expired token"}), 401
+        
+        decoded_token = response.json()
+        role = decoded_token.get('role')
 
         if role.lower() != "admin":
             return jsonify({"message": "Unauthorized access. Admin role required."}), 403
@@ -90,8 +102,13 @@ def delete_destination(id):
 
     try:
         token = auth_header.split()[1]
-        decoded_token = decode_token(token)
-        role = decoded_token.get("role")
+        response = requests.post(f"{AUTH_SERVICE_URL}/api/auth/decode_token", json={"token": token})
+
+        if response.status_code != 200:
+            return jsonify({"message": "Invalid or expired token"}), 401
+        
+        decoded_token = response.json()
+        role = decoded_token.get('role')
 
         if role.lower() != "admin":
             return jsonify({"message": "Unauthorized access. Admin role required."}), 403
@@ -104,4 +121,3 @@ def delete_destination(id):
     except Exception as e:
         print(f"Error: {e}")
         return jsonify({"message": f"An error occurred: {str(e)}"}), 500
-
