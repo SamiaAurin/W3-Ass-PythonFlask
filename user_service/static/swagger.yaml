@@ -32,7 +32,7 @@ paths:
                   example: Admin
                 admin_code:
                   type: string
-                  example: secure_admin_code
+                  example: Syeda_Samia_Sultana
       responses:
         201:
           description: User registered successfully
