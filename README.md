@@ -133,7 +133,14 @@ root/
 
 Please download the **How to Run This Project.pdf** file so that you can see the comments clearly and follow the instructions carefully to ensure you can successfully run the project.
 
+### **Note on Version Issues**
 
+If you encounter version-related issues while running the application, you can use the following command instead of **`python -m venv venv`** and **`python app.py`**:
+
+```bash
+python3 -m venv venv
+python3 app.py
+```
 ### Base URLs
 - Authentication Service: `http://127.0.0.1:5002`
 - User Service: `http://127.0.0.1:5001`
