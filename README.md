@@ -131,7 +131,7 @@ root/
 
 ## How to Run This Project
 
-Please read the **How to Run This Project.pdf** file and follow the instructions carefully to ensure you can successfully run the project.
+Please download the **How to Run This Project.pdf** file so that you can see the comments clearly and follow the instructions carefully to ensure you can successfully run the project.
 
 
 ### Base URLs
